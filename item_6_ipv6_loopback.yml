@@ -1,0 +1,16 @@
+---
+- name: Configurar IPv6 en interfaz Loopback 44
+  hosts: routers
+  gather_facts: no
+  tasks:
+    - name: Habilitar IPv6 unicast-routing globalmente (Pre-requisito)
+      ios_config:
+        lines:
+          - ipv6 unicast-routing
+
+    - name: Asignar direccionamiento IPv6 a Loopback 44
+      ios_config:
+        parents: interface Loopback44
+        lines:
+          - ipv6 address 3001:ABCD:ABCD:4::4/128
+          - ipv6 address FE80::1 link-local

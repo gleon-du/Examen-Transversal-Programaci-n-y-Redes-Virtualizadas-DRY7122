@@ -1,0 +1,14 @@
+---
+- name: Generar respaldo de la configuracion del router
+  hosts: routers
+  gather_facts: no
+  tasks:
+    - name: Ejecutar el comando show running-config
+      ios_command:
+        commands: show running-config
+      register: config_salida
+
+    - name: Guardar la salida en un archivo de texto local
+      copy:
+        content: "{{ config_salida.stdout[0] }}"
+        dest: "./respaldo_csr1000v.txt"

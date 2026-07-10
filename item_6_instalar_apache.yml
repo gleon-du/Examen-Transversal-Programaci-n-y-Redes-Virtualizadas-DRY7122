@@ -1,0 +1,28 @@
+---
+- name: Instalar Apache y configurar puerto 9999
+  hosts: webservers
+  become: yes  # Necesario para tener permisos de administrador (sudo) al instalar
+  tasks:
+    - name: Instalar servicio Apache2
+      apt:
+        name: apache2
+        state: present
+        update_cache: yes
+
+    - name: Cambiar el puerto de escucha a 9999 en ports.conf
+      lineinfile:
+        path: /etc/apache2/ports.conf
+        regexp: '^Listen '
+        line: 'Listen 9999'
+
+    - name: Cambiar el puerto en el VirtualHost por defecto
+      lineinfile:
+        path: /etc/apache2/sites-available/000-default.conf
+        regexp: '^<VirtualHost \*:.*>'
+        line: '<VirtualHost *:9999>'
+
+    - name: Reiniciar el servicio Apache para aplicar cambios
+      service:
+        name: apache2
+        state: restarted
+        enabled: yes
